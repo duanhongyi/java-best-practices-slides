@@ -590,10 +590,241 @@ class ForBenchmark extends Benchmark{
   </slide>
     <slide>
     <hgroup>
+      <h2>用静态方法代替构造器<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>对于类而言，为了让客户端获取它自身的一个实例，最常用的方法就是提供一个公有的构造器。</p>
+        <pre class="prettyprint" data-lang="java">
+public Boolean(boolean b){}
+public Boolean(String b){}
+public Boolean(int b){}
+        </pre>        
+        <p>如果对象不可变或者参数类型过多，可以使用静态工厂方法代替构造器。静态工厂方法和公有构造器都各有用处，我们需要理解它们各自的长处。静态工厂通常更加合适参数较多或者对象不可变的情况，因此大多数情况我们应该优先考虑静态工厂。</p>
+        <pre class="prettyprint" data-lang="java">
+public static Boolean valueOf(boolean b){
+    return b?Boolean.TRUE:Boolean.FALSE;
+}
+public static Boolean valueOf(String b){
+    return b!=null?Boolean.TRUE:Boolean.FALSE;
+}
+public static Boolean valueOf(int b){
+    return b>0?Boolean.TRUE:Boolean.FALSE;
+}
+        </pre>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>避免创建不必要的对象<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>一般来说最好能够重用对象而不是在每次需要的时候就创建一个相同功能的新对象，如果对象是不可变的，那么他就可以重用。</p>
+        <pre class="prettyprint" data-lang="java">
+String s = new String("hello");//bad
+String s = "hello";//good
+        </pre>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>避免使用finalizer方法<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>终结方法finalizer通常是不可预测的，也是很危险的.一般情况下是不必要的。使用终结方法会导致行为不稳定，降低性能，以及可移植性问题。</p>
+        <pre class="prettyprint" data-lang="java">
+@Override
+protected void finalize() throws Throwable{
+    try{
+       //终结子类的状态
+    }finally{
+        super.finalize();
+    }
+}
+        </pre>
+        <p>根据经验，应避免使用终结方法。Java语言规范不仅不能保证终结方法会被及时的执行，而且根本就不保证他们会执行。该方法具有固有的不安全性。它可能对正在使用的对象调用终结方法，而其他线程同时正在操作这些对象，从而导致不正确的行为或死锁。</p>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>重写equals必须重写hashcode<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>在每个覆盖了equals方法的类中，也必须覆盖hashCode方法。如果不这样做的话，就会违反Object.hashCode的通用约定，从而导致该类无法结合所有基于散列的集合一起正常运作，这样的集合包括HashMap、HashSet和Hashtable。 在覆盖equals方法的时候，你必须要遵守它的通用约定。</p>
+<li>自反性。对于任何非null的引用值x，x.equals(x)必须返回true。</li>
+<li>对称性。对于任何非null的引用值x和y，当且仅当y.equals(x)返回true时，x.equals(y)必须返回true</li>
+<li>传递性。对于任何非null的引用值x、y和z，如果x.equals(y)返回true，并且y.equals(z)也返回true，那么x.equals(z)也必须返回true。</li>
+<li>一致性。对于任何非null的引用值x和y，只要equals的比较操作在对象中所用的信息没有被修改，多次调用该x.equals(y)就会一直地返回true，或者一致地返回false。</li>
+<li>对于任何非null的引用值x，x.equals(null)必须返回false。 </li>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>使类和成员的可访问性最小化 <h2>
+    </hgroup>
+    <article class="smaller">
+        <p>要区别设计良好的模块与设计不好的模块，最重要的因素在于，这个模块对于外部的其他模块而言，是否隐藏其内部数据和其他细节。</p>
+        <pre class="prettyprint" data-lang="java">
+public static final String[] PRIVATE_VALUES = {"a","c"};  
+        </pre>
+        <p>设计良好的模块会隐藏所有的实现细节，把他的API和他的实现清晰的分割开来。然后，模块之间通过他们之间的API进行通信，一个模块不需要知道其他模块的内部情况，这样才能最大程度的解耦合。</p>
+			<pre class="prettyprint" data-lang="java">
+private static final String[] PRIVATE_VALUES = {"a","c"};  
+public static final Thing[] values() {  
+    return PRIVATE_VALUES.clone();  
+}
+        </pre>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>复合优于继承<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>面向对象编程的新手通常会犯这样的错误，他们对任何东西都想使用继承，例如让类Car继承Engine类。</p>
+        <pre class="prettyprint" data-lang="java">
+class Engine{public void run(){}}
+class Car extends Engine{
+
+}
+        </pre>
+        <p>继承确实是个有趣的新工具，但它并非适用于所有情况。你可以用上述的继承结构创建可正常工作的程序，因为Car代码中使发动机运行的那部分可访问。但是其他人在阅读这段代码时会觉得不合理。汽车是台发动机？当然不是。所以，只应在恰当的时候使用继承。继承破坏了面向对象思想中的封装特性，这是因为子类继承父类会对父类的封装进行重写而破坏原有的父类的封装，只有明确是继承关系的时候才用继承。</p>
+        <pre class="prettyprint" data-lang="java">
+class Engine{public void run(){}}
+class Car{
+	private Engine engine = new Engine();
+	public void run(){
+		engine.run()
+	}
+}
+        </pre>    
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>接口只用于定义类型<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>当类实现接口时，接口就充当可以引用这个类的实例的类型。因此类实现了接口，就表明客户端可以对这个类的实例实施某些动作。为了其他目的而使用接口是不恰当的。</p>
+        <pre class="prettyprint" data-lang="java">
+public interface RP {//bad
+  public static final boolean GOOD=0;  
+  public static final boolean BAD =1;  
+} 
+        </pre>
+        <p>常量接口模式是对接口的不良使用。如果这些常量最好被看作枚举类型的成员，使用枚举类型。否则，应该使用不可实例化的工具类来导出这些常量。</p>
+        <pre class="prettyprint" data-lang="java">
+enum RP{//good
+    GOOD,BAD
+}
+        </pre>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>最小化局部变量的作用域<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>过早的声明一个局部变量，不仅会使它的作用域过早开始，还可能使它的作用域过迟结束。局部变量的作用域从声明它的地方开始，到所在块的结束处结束。如果在使用变量的语句块外面声明变量，哪么在语句块结束后，这个变量仍是可见的。如果变量在其使用域之前或之后被偶然使用，结果可能是灾难性的。</p>
+        <pre class="prettyprint" data-lang="java">
+Iterator<Element> i = c.iterator()
+while(i.hasNext()){}
+Iterator<Element> i2 = c2.iterator()
+while(i.hasNext()){}
+        </pre>
+		<p>循环语句是展示最小化变量作用域的特别时机。For循环，无论是传统的还是for-each形式，都允许声明循环变量，从而限制了循环变量的作用域只在需要它们的区域内，因此，如果循环结束后不再需要循环变量，哪么for循环优于while循环。</p>        
+        <pre class="prettyprint" data-lang="java">
+//迭代集合优先使用for each而不是传统的计数迭代
+for (int i =0;i&lt;c.size();i++) {//bad
+    Element e = c.get(i)
+    doSomething(e);
+}
+for (Element e : c) {//good
+    doSomething(e);
+}
+        </pre>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>如果要精确计算避免使用float和double<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>float和double类型的主要设计目的是为了科学计算和工程计算。它们执行二进制浮点运算，这是为了在广域数值范围上提供较为精确的快速近似计算而精心设计的。然而，它们没有提供完全精确的结果，所以不应该被用于要求精确结果的场合。float和double类型对于货币计算尤为不合适，因为要让一个float或者double精确地表示0.1(或者10的任何负数次方值)是不可能的，比如System.out.println(2.0-1.1)将会打印0.899999999999999,而不是你所希望的0.9，这种舍入错误产生的原因是浮点数实际上是用二进制系统实现的，解决方法是使用BigDecimal、int或long(将小数转换为整数再进行计算，例如：将以美元为单位的货币计算改为以美分为单位的货币计算)。</p>
+    </article>
+  </slide>
+
+
+    <slide>
+    <hgroup>
+      <h2>避免使用字符串拼接<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+  public void testPlus() { 
+        String s = "";
+        long ts = System.currentTimeMillis();
+        for (int i = 0; i &lt; 10000; i++) {
+            s = s + String.valueOf(i);
+        }
+        long te = System.currentTimeMillis();
+        logger.info("+ cost {} ms", te - ts);
+    }
+        </pre>
+        <pre class="prettyprint" data-lang="java">
+    public void testStringBuilder() {
+        StringBuilder sb = new StringBuilder();
+        long ts = System.currentTimeMillis();
+        for (int i = 0; i &lt; 100000; i++) {
+            sb.append(String.valueOf(i));
+        }
+        sb.toString();
+        long te = System.currentTimeMillis();
+        logger.info("StringBuilder cost {} ms", te - ts);
+    }
+        </pre>
+<p>两者之间的性能相差10倍，尽量避免字符串拼接，如果多线程拼接考虑使用StringBuffer。</p>
+    </article>
+  </slide>
+
+
+    <slide>
+    <hgroup>
+      <h2>Executor 和 Task优先于线程<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+ExecutorService executor = Executors.newSingleThreadExecutor();
+executor.execute(runnable);
+executor.shutdown();
+        </pre>
+<p>他可以比线程更优雅的关闭，甚至可以提供可复用的线程池，甚至可以代替Timer，总之在1.5以后的版本尽量避免使用原生的线程。</p>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
       <h2>RuntimeException vs Exception<h2>
     </hgroup>
     <article class="smaller">
-        <span>选择检查型还是非检查型异常，对于Java编程人员来说，总是让人感到困惑。检查型异常保证你对错误条件提供异常处理代码，这是一种从语言到强制你编写健壮的代码的一种方式，但同时会引入大量杂乱的代码并导致其不可读。当然，如果你有替代品和恢复策略的话，捕捉异常并做些什么看起来似乎也在理。大多数情况下我们遵循：为可恢复的错误使用检查型异常，为编程错误使用非检查型错误</span>
+        <span>选择检查型还是非检查型异常，对于Java编程人员来说，总是让人感到困惑。检查型异常保证你对错误条件提供异常处理代码，这是一种从语言到强制你编写健壮的代码的一种方式，但同时会引入大量杂乱的代码并导致其不可读。当然，如果你有替代品和恢复策略的话，捕捉异常并做些什么看起来似乎也在理。</span>
+        <pre class="prettyprint" data-lang="java">
+Connection con = null;			
+try{
+    con = connect();
+}catch(SocketException e){				
+    con = reconnect();
+    if(con == null){
+        logger.error(e);				
+    }else{
+        logger.debug(e);
+    }
+}
+        </pre>					
+		<p>大多数情况下我们遵循：为可恢复的错误使用检查型异常，为编程错误使用非检查型错误</p>    
     </article>
   </slide>
     <slide>
@@ -601,7 +832,7 @@ class ForBenchmark extends Benchmark{
       <h2>在finally中释放资源<h2>
     </hgroup>
     <article class="smaller">
-        <span>这在Java编程中，是一个广为人知的最佳实践，在处理网络和IO类的时候，相当于一个标准。在finally块中关闭资源，在正常和异常执行的情况下，保证之前和稀缺资源的合理释放，这由try finally块保证。从Java7开始，该语言有了一项更有趣的功能：资源管理自动化或者ARM块能实现这一功能。尽管如此，我们仍然要记住在finally块中释放资源，因为并不是所有的类都提供ARM块功能。 </span>
+        <span>这在Java编程中，是一个广为人知的最佳实践，在处理网络和IO类的时候，相当于一个标准。在finally块中关闭资源，在正常和异常执行的情况下，保证之前和稀缺资源的合理释放，这由try finally块保证。</span>
         <pre class="prettyprint" data-lang="java">
 Lock lock = new WriteableLock();
 try{
@@ -610,14 +841,15 @@ try{
     lock.release();
 }
         </pre>
+        <p>从Java7开始，有了一项更有趣的功能：资源管理自动化或者ARM块能实现这一功能。尽管如此，我们仍然要记住在finally块中释放资源，因为并不是所有的类都提供ARM块功能。 </p>
     </article>
   </slide>
     <slide>
     <hgroup>
-      <h2>在堆栈跟踪中包含引起异常的原因<h2>
+      <h2>在堆栈中跟踪包含引起异常的深层原因<h2>
     </hgroup>
     <article class="smaller">
-        <span>很多时候，当一个由另一个异常导致的异常被抛出的时候，Java库和开放源代码会将一种异常包装成另一种异常。日志记录和打印根异常就变得非常重要。Java异常类提供了getCause()方法来检索导致异常的原因，这些（原因）可以对异常的根层次的原因提供更多的信息。该Java实践对在进行调试或排除故障大有帮助。时刻记住，如果你将一个异常包装成另一种异常时，构造一个新异常要传递源异常。</span>
+        <span>很多时候，当一个异常是由另一个异常导致的时候，基础类库通常会将一种异常包装成其他异常。</span>
         <pre class="prettyprint" data-lang="java">
 try{
     do();
@@ -625,13 +857,14 @@ try{
     throw new FileNotFoundException(e);
 }
         </pre>
-        <span>始终提供关于异常的有意义的完整的信息。</span>
+        <span>始终提供关于异常有意义的完整信息。</span>
         <pre class="prettyprint" data-lang="java">
             //bad
             throw new IllegalArgumentException("Incorrect argument for method")
             //good
             throw new IllegalArgumentException("Illegal value for name:'bing'")
         </pre>
+        <p>Java异常类提供了getCause()方法来检索导致异常的深层原因，这些原因可以对异常的根层次的原因提供更多的信息，这样做对调试或排除故障有很大的帮助。时刻记住，如果你将一个异常包装成另一种异常时，构造一个新异常要传递源异常。</p>
     </article>
   </slide>
     <slide>
@@ -639,7 +872,7 @@ try{
       <h2>避免过度使用检查型异常<h2>
     </hgroup>
     <article class="smaller">
-        <span>检查型异常在强制执行方面有一定的优势，但同时它也破坏了代码，通过掩盖业务逻辑使代码可读性降低。只要你不过度使用检查型异常，你可以最大限度的减少这类情况，这样做的结果是你会得到更清洁的代码。我们还可以将无法处理或者想要统一处理的异常统一包装成运行时异常，诸如Spring之类的多数框架中用来限制使用检查型异常，在Spring框架中大部分出自于JDBC的检查类型异常，都被包装进非检查型异常DataAccessException中。这是Java最佳实践带来的好处，特定的异常限制到特定的模块，像 SQLException 放到DAO层，将意思明确的运行时异常抛到客户层。 </span>
+        <span>检查型异常在强制执行方面有一定的优势，但同时它也破坏了代码正常逻辑。只要你不过度使用检查型异常，你可以最大限度的减少这类情况，这样做的结果是你会得到更简洁的代码。我们还可以将无法处理或者想要统一处理的异常统一包装成运行时异常。 </span>
         <pre class="prettyprint" data-lang="java">
 try{
     do();
@@ -647,6 +880,7 @@ try{
     throw new RuntimeException(e);
 }
         </pre>
+        <p>诸如Spring、XStream之类的多数框架中限制使用检查型异常；在Spring框架中大部分出自于JDBC的检查类型异常，都被包装进非检查型异常DataAccessException中。特定的异常限制到特定的模块，像 SQLException 放到DAO层，将意思明确的运行时异常抛到客户层。</p>
     </article>
   </slide>
 
@@ -655,13 +889,20 @@ try{
       <h2>记住对性能而言，异常代价高昂<h2>
     </hgroup>
     <article class="smaller">
-        <span>需要记住的一件事是异常代价高昂，同时让你的代码运行缓慢。假如你有方法从ResultSet（结果集）中进行读取，这时常会抛出SQLException异常而不会移到下一元素，这将会比不抛出异常的正常代码执行的慢的多。因此最大限度的减少不必要的异常捕捉和移动，是解决问题的根本方式。不要仅仅是抛出和捕捉异常，如果你能使用boolean变量去表示执行结果，可能会得到更整洁，更高性能的解决方案。修正错误的根源，避免不必须要的异常捕捉。</span>
+        <span>假如你有方法从ResultSet（结果集）中进行读取，这时常会抛出SQLException异常而不会移到下一元素，这将会比不抛出异常的正常代码执行的慢的多。</span>
         <pre class="prettyprint" data-lang="java">
 //性能至上的场合千万不要这么做。
 if(length &lt; 0){
     throw new ValueException();
 }
         </pre>
+        <p>因此最大限度的减少不必要的异常捕捉和移动，是解决问题的根本方式。不要仅仅是抛出和捕捉异常，如果你能使用boolean变量去表示执行结果，可能会得到更整洁，更高性能的解决方案。修正错误的根源，避免使用不必要的异常。</p>
+        <pre class="prettyprint" data-lang="java">
+if(length &lt; 0){
+    return false;
+}
+        </pre> 
+        <p>需要记住的一件事是异常代价高昂，同时让你的代码运行缓慢。</p>
     </article>
   </slide>
   <slide>
@@ -669,28 +910,21 @@ if(length &lt; 0){
       <h2>避免catch块为空<h2>
     </hgroup>
     <article class="smaller">
-        <span>没有什么比空的catch块更糟糕的了，因为它不仅隐藏了错误和异常，同时可能导致你的对象处于不可使用或者脏的状态。空的catch块只能变得无意义，如果你非常肯定异常不会继续以任何方式影响对象状态，用日志记录错误依然是最好的方法。编写异常处理代码，这不仅仅是一个Java最佳实践，而是一个最通用的实践。</span>
+        <span>没有什么比空的catch块更糟糕的了，因为它不仅隐藏了错误和异常，同时可能导致你的对象处于不可使用或者脏的状态。</span>
         <pre class="prettyprint" data-lang="java">
-        //bad
-            try{
-                do();
-            }catch(Exception e){
-                
-            }
-        //better
-            try{
-                do();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        //good
-            try{
-                do();
-            }catch(Exception e){
-                logger.debug(e);
-            }
-
+//bad
+try{
+    do();
+}catch(Exception e){
+}
+//good
+try{
+    do();
+}catch(Exception e){
+    logger.debug(e);
+}
         </pre>
+        <p>空的catch块只能变得无意义，如果你非常肯定异常不会继续以任何方式影响对象状态，用日志记录错误依然是最好的方法。编写异常处理代码，这不仅仅是一个Java最佳实践，而是一个最通用的实践。</p>
     </article>
   </slide>
   <slide>
@@ -710,7 +944,9 @@ if(length &lt; 0){
       <h2>JVM上的其他语言<h2>
     </hgroup>
     <article class="smaller">
-        <span>Java虚拟机已经不再是仅仅局限在 Java 了，很多语言提供了脚本转换，可以让其他的程序在java虚拟机上运行，这样能够让更多的开发者能够依靠JVM在Java平台上大有作为。而且虚拟机以及 对应的字节码都是开源的，所以你也能很容易地生成对应字节码来做一款属于你自己的编程语言。</span>
+      <span>近年来，Java领域最有影响力的趋势之一是JVM（Java虚拟机）上对于非Java语言的支持。JVM作为一种机制用以提供Java应用在不同的环境，其他平台以及不同硬件上的可移植性，而基于JVM平台的编程语言也是不断的在增加。</span>
+		<img src="images/jvm_lang.png">		
+		<p>从动态语言如Groovy、JRuby, Jython到静态型Scala语言， JVM也正成为一个多元化的平台，开发人员可以充分利用不同语言来满足各自不同的需求。</p>    
     </article>
   </slide>
 
@@ -753,7 +989,7 @@ object  HelloWorld {
     </hgroup>
     <article class="smaller">
         <p>JRuby是面向Ruby、基于Java虚拟机(JVM)的一种解释程序，它结合了Ruby语言的简易性和功能强大的JVM的执行机制，包括与Java库全面集成。</p>
-        <pre class="prettyprint" data-lang="scala">
+        <pre class="prettyprint" data-lang="jruby">
 include_class "java.util.HashMap"     
 x = HashMap.new     
 x.put("foo","bar")
@@ -766,7 +1002,7 @@ x.put("foo","bar")
     </hgroup>
     <article class="smaller">
     <p>Jython是一种完整的语言，而不是一个Java翻译器或仅仅是一个Python编译器，它是一个Python语言在Java中的完全实现。</p>
-        <pre class="prettyprint" data-lang="scala">
+        <pre class="prettyprint" data-lang="jython">
 from java.util import HashMap
 b=HashMap()
 b.put("a", "1")
@@ -782,7 +1018,7 @@ b.put("b","2")
     <article class="smaller">
         <p>Lisp
         是一种编程语言，以表达性和功能强大著称，但人们通常认为它不太适合应用于一般情况。Clojure是一种运行在 Java™ 平台上的 Lisp 方言。</p>
-        <pre class="prettyprint" data-lang="scala">
+        <pre class="prettyprint" data-lang="clojure">
 (doto (new java.util.HashMap) (put "a" 1) (put "b" 2))
         </pre>
     </article>
