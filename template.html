@@ -512,6 +512,66 @@ public class Test {
   </slide>
     <slide>
     <hgroup>
+      <h2>装饰器模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+public interface Sourcable {  
+    public String operation(); 
+}
+public class Source implements Sourcable {  
+    public String operation() {  
+        return "原始类的方法";  
+    } 
+}
+public class LowerDecorator implements Sourcable {  
+  
+    private Sourcable sourcable;  
+    public Decorator2(Sourcable sourcable){  
+        super();  
+        this.sourcable=sourcable;  
+    }  
+    public String operation() {  
+        return sourcable.operation().lower();
+    }  
+}
+        </pre>
+        <p>动态地给一个对象添加一些额外的职责或者行为。</p>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>模板模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+public abstract class Benchmark{
+　　public abstract void benchmark();
+　　public final long repeat (int count) {
+　　　　if (count &lt;= 0){
+　　　　　　return 0;
+　　　　}else {
+　　　　　　long startTime = System.currentTimeMillis();
+
+　　　　    for (int i = 0; i &lt; count; i++) 
+　　　　　　    benchmark();
+　　　　    long stopTime = System.currentTimeMillis();
+　　　　    return stopTime - startTime;
+　　    }
+    }
+}
+class ForBenchmark extends Benchmark{
+    public void benchmark(){
+        for(int i = 0;i&lt;10000000;i++){
+        }
+    }
+}
+        </pre>
+        <p>定义一个操作中算法的骨架,将一些步骤的执行延迟到其子类中。</p>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
       <h2>以上抛砖引玉，仅仅是一个开始<h2>
     </hgroup>
     <article class="smaller">
@@ -528,15 +588,123 @@ public class Test {
         <footer class="source">离娄之明,公输子之巧,不以规矩,不成方圆</footer>
     </article>
   </slide>
-
-  <slide>
+    <slide>
     <hgroup>
-      <h2>JVM上的其他语言<h2>
+      <h2>RuntimeException vs Exception<h2>
     </hgroup>
     <article class="smaller">
-        <span>Java虚拟机已经不再是仅仅局限在 Java 了，很多语言提供了脚本转换，可以让其他的程序在java虚拟机上运行，这样能够让更多的开发者能够依靠JVM在Java平台上大有作为。而且虚拟机以及 对应的字节码都是开源的，所以你也能很容易地生成对应字节码来做一款属于你自己的编程语言。</span>
+        <span>选择检查型还是非检查型异常，对于Java编程人员来说，总是让人感到困惑。检查型异常保证你对错误条件提供异常处理代码，这是一种从语言到强制你编写健壮的代码的一种方式，但同时会引入大量杂乱的代码并导致其不可读。当然，如果你有替代品和恢复策略的话，捕捉异常并做些什么看起来似乎也在理。大多数情况下我们遵循：为可恢复的错误使用检查型异常，为编程错误使用非检查型错误</span>
     </article>
   </slide>
+    <slide>
+    <hgroup>
+      <h2>在finally中释放资源<h2>
+    </hgroup>
+    <article class="smaller">
+        <span>这在Java编程中，是一个广为人知的最佳实践，在处理网络和IO类的时候，相当于一个标准。在finally块中关闭资源，在正常和异常执行的情况下，保证之前和稀缺资源的合理释放，这由try finally块保证。从Java7开始，该语言有了一项更有趣的功能：资源管理自动化或者ARM块能实现这一功能。尽管如此，我们仍然要记住在finally块中释放资源，因为并不是所有的类都提供ARM块功能。 </span>
+        <pre class="prettyprint" data-lang="java">
+Lock lock = new WriteableLock();
+try{
+    lock.lock();
+}finally{
+    lock.release();
+}
+        </pre>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>在堆栈跟踪中包含引起异常的原因<h2>
+    </hgroup>
+    <article class="smaller">
+        <span>很多时候，当一个由另一个异常导致的异常被抛出的时候，Java库和开放源代码会将一种异常包装成另一种异常。日志记录和打印根异常就变得非常重要。Java异常类提供了getCause()方法来检索导致异常的原因，这些（原因）可以对异常的根层次的原因提供更多的信息。该Java实践对在进行调试或排除故障大有帮助。时刻记住，如果你将一个异常包装成另一种异常时，构造一个新异常要传递源异常。</span>
+        <pre class="prettyprint" data-lang="java">
+try{
+    do();
+}cache(IOException e){
+    throw new FileNotFoundException(e);
+}
+        </pre>
+        <span>始终提供关于异常的有意义的完整的信息。</span>
+        <pre class="prettyprint" data-lang="java">
+            //bad
+            throw new IllegalArgumentException("Incorrect argument for method")
+            //good
+            throw new IllegalArgumentException("Illegal value for name:'bing'")
+        </pre>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>避免过度使用检查型异常<h2>
+    </hgroup>
+    <article class="smaller">
+        <span>检查型异常在强制执行方面有一定的优势，但同时它也破坏了代码，通过掩盖业务逻辑使代码可读性降低。只要你不过度使用检查型异常，你可以最大限度的减少这类情况，这样做的结果是你会得到更清洁的代码。我们还可以将无法处理或者想要统一处理的异常统一包装成运行时异常，诸如Spring之类的多数框架中用来限制使用检查型异常，在Spring框架中大部分出自于JDBC的检查类型异常，都被包装进非检查型异常DataAccessException中。这是Java最佳实践带来的好处，特定的异常限制到特定的模块，像 SQLException 放到DAO层，将意思明确的运行时异常抛到客户层。 </span>
+        <pre class="prettyprint" data-lang="java">
+try{
+    do();
+}cache(Exception e){
+    throw new RuntimeException(e);
+}
+        </pre>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>记住对性能而言，异常代价高昂<h2>
+    </hgroup>
+    <article class="smaller">
+        <span>需要记住的一件事是异常代价高昂，同时让你的代码运行缓慢。假如你有方法从ResultSet（结果集）中进行读取，这时常会抛出SQLException异常而不会移到下一元素，这将会比不抛出异常的正常代码执行的慢的多。因此最大限度的减少不必要的异常捕捉和移动，那里没有什么固定的原因。不要仅仅是抛出和捕捉异常，如果你能使用boolean变量去表示执行结果，可能会得到更整洁，更高性能的解决方案。修正错误的根源，避免不必须要的异常捕捉。</span>
+        <pre class="prettyprint" data-lang="java">
+//性能至上的场合千万不要这么做。
+if(length &lt; 0){
+    throw new ValueException();
+}
+        </pre>
+    </article>
+  </slide>
+  <slide>
+    <hgroup>
+      <h2>避免catch块为空<h2>
+    </hgroup>
+    <article class="smaller">
+        <span>没有什么比空的catch块更糟糕的了，因为它不仅隐藏了错误和异常，同时可能导致你的对象处于不可使用或者脏的状态。空的catch块只能变得无意义，如果你非常肯定异常不会继续以任何方式影响对象状态，用日志记录错误依然是最好的方法。编写异常处理代码，这不仅仅是一个Java最佳实践，而是一个最通用的实践。</span>
+        <pre class="prettyprint" data-lang="java">
+        //bad
+            try{
+                do();
+            }catch(Exception e){
+                
+            }
+        //better
+            try{
+                do();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        //good
+            try{
+                do();
+            }catch(Exception e){
+                logger.debug(e);
+            }
+
+        </pre>
+    </article>
+  </slide>
+  <slide>
+    <hgroup>
+      <h2>其他异常最佳实践<h2>
+    </hgroup>
+    <article class="smaller">
+        <ul>
+            <li>尽可能重用标准异常，这样可显著增强代码的可读性。</li>
+            <li>在Java doc中明确说明抛出异常的种类，如果编写公用类库这个很重要。</li>
+        </ul>
+    </article>
+  </slide>
+
     <slide>
     <hgroup>
       <h2>Groovy<h2>
