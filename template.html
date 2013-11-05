@@ -655,7 +655,7 @@ try{
       <h2>记住对性能而言，异常代价高昂<h2>
     </hgroup>
     <article class="smaller">
-        <span>需要记住的一件事是异常代价高昂，同时让你的代码运行缓慢。假如你有方法从ResultSet（结果集）中进行读取，这时常会抛出SQLException异常而不会移到下一元素，这将会比不抛出异常的正常代码执行的慢的多。因此最大限度的减少不必要的异常捕捉和移动，那里没有什么固定的原因。不要仅仅是抛出和捕捉异常，如果你能使用boolean变量去表示执行结果，可能会得到更整洁，更高性能的解决方案。修正错误的根源，避免不必须要的异常捕捉。</span>
+        <span>需要记住的一件事是异常代价高昂，同时让你的代码运行缓慢。假如你有方法从ResultSet（结果集）中进行读取，这时常会抛出SQLException异常而不会移到下一元素，这将会比不抛出异常的正常代码执行的慢的多。因此最大限度的减少不必要的异常捕捉和移动，是解决问题的根本方式。不要仅仅是抛出和捕捉异常，如果你能使用boolean变量去表示执行结果，可能会得到更整洁，更高性能的解决方案。修正错误的根源，避免不必须要的异常捕捉。</span>
         <pre class="prettyprint" data-lang="java">
 //性能至上的场合千万不要这么做。
 if(length &lt; 0){
@@ -705,6 +705,15 @@ if(length &lt; 0){
     </article>
   </slide>
 
+  <slide>
+    <hgroup>
+      <h2>JVM上的其他语言<h2>
+    </hgroup>
+    <article class="smaller">
+        <span>Java虚拟机已经不再是仅仅局限在 Java 了，很多语言提供了脚本转换，可以让其他的程序在java虚拟机上运行，这样能够让更多的开发者能够依靠JVM在Java平台上大有作为。而且虚拟机以及 对应的字节码都是开源的，所以你也能很容易地生成对应字节码来做一款属于你自己的编程语言。</span>
+    </article>
+  </slide>
+
     <slide>
     <hgroup>
       <h2>Groovy<h2>
@@ -738,6 +747,47 @@ object  HelloWorld {
         </pre>
     </article>
   </slide>
+      <slide>
+    <hgroup>
+      <h2>JRuby<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>JRuby是面向Ruby、基于Java虚拟机(JVM)的一种解释程序，它结合了Ruby语言的简易性和功能强大的JVM的执行机制，包括与Java库全面集成。</p>
+        <pre class="prettyprint" data-lang="scala">
+include_class "java.util.HashMap"     
+x = HashMap.new     
+x.put("foo","bar")
+        </pre>
+    </article>
+  </slide>
+      <slide>
+    <hgroup>
+      <h2>Jython<h2>
+    </hgroup>
+    <article class="smaller">
+    <p>Jython是一种完整的语言，而不是一个Java翻译器或仅仅是一个Python编译器，它是一个Python语言在Java中的完全实现。</p>
+        <pre class="prettyprint" data-lang="scala">
+from java.util import HashMap
+b=HashMap()
+b.put("a", "1")
+b.put("b","2")
+        </pre>
+    </article>
+  </slide>
+
+      <slide>
+    <hgroup>
+      <h2>Clojure<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>Lisp
+        是一种编程语言，以表达性和功能强大著称，但人们通常认为它不太适合应用于一般情况。Clojure是一种运行在 Java™ 平台上的 Lisp 方言。</p>
+        <pre class="prettyprint" data-lang="scala">
+(doto (new java.util.HashMap) (put "a" 1) (put "b" 2))
+        </pre>
+    </article>
+  </slide>
+
   <slide>
     <hgroup>
       <h2>JVM未来走向平台化<h2>
