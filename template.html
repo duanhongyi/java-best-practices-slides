@@ -1,0 +1,623 @@
+<!--
+Google IO 2012/2013 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahé <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="logoslide nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/developers_logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="title-slide segue nobackground">
+    <aside class="gdbar"><img src="images/developers_icon_128.png"></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>今天的话题</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>不可磨灭的辉煌历史以及未来十年Java发展路线</li>
+        <li>Java1.5以后语法层面一些有用的特性分享</li>
+        <li>站在巨人肩上改善代码的设计，提升应用的质量
+          <ul>
+            <li>Java一些常用的设计模式</li>
+            <li>Java的若干条程序设计军规</li>
+          </ul>
+        </li>
+        <li>Groovy、JRudy、Jython、Clojure、Scala、Ceylon、Lua</li>
+      </ul>
+    </article>
+  </slide>
+  <slide>
+    <hgroup>
+      <h2>Java简介</h2>
+    </hgroup>
+    <article class="smaller">
+        <p>Java是由Sun
+        Microsystems公司于1995年5月推出的Java面向对象程序设计语言和JVM平台的总称。由James
+        Gosling和同事们共同研发，并在1995年正式推出。</p>
+        <ul>
+            <li>每年达10亿以上的下载</li>
+            <li>900万以上的开发者</li>
+            <li>将近97%的企业电脑运行着Java</li>
+            <li>40亿台各种设备装有java基本环境</li>        
+        </ul>
+        <p>Sun 公司对 Java 编程语言的解释是：Java
+        编程语言是个简单、面向对象、分布式、解释性、健壮、安全与系统无关、可移植、高性能、多线程和动态的语言。</p>
+    </article>
+  </slide>
+  <slide>
+    <hgroup>
+      <h2>Java发展历史</h2>
+    </hgroup>
+    <article class="smaller">
+        <ul class="build fade">
+            <li>1995，Java语言诞生</li>
+            <li>1996，JDK1.0诞生，多数的操作系统供应商在其产品中嵌入JAVA技术；同时在约8.3万个网页中得以使用</li>
+            <li>1997，JDK1.1发布，JavaOne召开，1万人参加创全球同类会议记录；社区蓬勃发展，最大社区人数超过十万</li>
+            <li>1998，JDK1.1被下载超过2,000,000次，JAVA2企业平台J2EE发布</li>
+            <li>1999，SUN公司发布Java的三个版本：标准版、企业版和微型版</li>
+            <li>2000，JDK1.3、JDK1.4发布</li>
+            <li>2001，J2SE1.3发布；NOKIA宣布，到2003年将出售1亿部支持Java的手机</li>
+            <li>2002，J2SE1.4发布，自此Java的计算能力有了大幅提升</li>
+            <li>2004，J2SE1.5发布，成为Java语言发展史上的又一里程碑，SUN对所有版本进行更名</li>
+            <li>2006，SUN公司发布JRE6.0，该版本大幅度提高性能</li>
+            <li>2007，基于Linux和Harmony的智能手机项目成立，代号Android</li>
+            <li>2008，世界上第一台商用Android手机HTC G1诞生</li>            
+            <li>2009，甲骨文74亿美元收购Sun。取得java的版权</li>
+            <li>2010，由于甲骨文对于Java社区的不友善，因此Apache退出JCP，同时Harmony项目宣布即将终结</li>
+            <li>2011，甲骨文发布java7.0的正式版</li>
+        </ul>
+    </article>
+  </slide>
+  <slide>
+    <hgroup>
+      <h2>Java十年发展路线</h2>
+    </hgroup>
+    <article class="smaller">
+        <ul class="build fade">
+            <li>JVM：近年将开始支持越来越多的流行编程语言，包括Groovy、Jython、Ceylon等。</li>
+<li>Java 8：提高释放对象能力，易用性以及在云计算方面的优化，提供统一的类型系统和优化数据结构。在云计算方面，JVM为安全的运行多个程序提供多租户功能，及每个线程/线程组之间的资源处理和管理。</li>
+<li>Java 9：将新增一些语言上的特性，包括大数据的支持、64位的大数组备份。异种计算模型新增了Java语言对GPU的支持、FPGA、离线引擎、远程PL/SQL。</li>
+<li>Java 10及以上：支持扩展函数类型，具有真正的泛型函数类型，包括多维数组数据结构优化。</li>
+        </ul>
+    </article>
+  </slide>
+  <slide>
+    <hgroup>
+      <h2>Java十年发展路线</h2>
+    </hgroup>
+    <article class="smaller">
+        <table>
+        <tr>
+          <th></th><th>版本号</th><th>发布时间</th>
+        </tr>
+        <tr>
+          <td>1</td><td>Java 8</td><td>2013年</td>
+        </tr>
+        <tr>
+          <td>2</td><td>Java 9</td><td>2015年</td>
+        </tr>
+        <tr>
+          <td>3</td><td>Java 10</td><td>2017年</td>
+        </tr>
+        <tr>
+          <td>4</td><td>Java 11</td><td>2019年</td>
+        </tr>
+        <tr>
+          <td>5</td><td>Java 12</td><td>2021年</td>
+        </tr>
+      </table>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Java1.5以后的语法级新特性一览<h2>
+    </hgroup>
+    <article>
+        <img src="images/hot_java.png" class="reflect" alt="Description" title="Description">
+        <footer class="source">对与语言来说，我们期望其核心部分尽可能简洁</footer>
+    </article>
+    </slide>
+  <slide>
+    <hgroup>
+      <h2>范型与For-Each循环<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+//范型
+List&lt;String&gt; list = new ArrayList&lt;String&gt;();
+//list.add(1);编译期错误
+list.add("1");
+        </pre>
+        <pre class="prettyprint" data-lang="java">
+//For-Each循环
+List&lt;String&gt; list = new ArrayList&lt;String&gt;();
+list.add("1");
+list.add("2");
+list.add("3");
+list.add("4");
+for(String word:list){
+    System.out.println(word);
+}            
+        </pre>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>自动装箱拆箱与枚举类型<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+//自动装箱拆箱
+Integer i = 1;//类型自动转换
+int j = i;//类型自动转换
+        </pre>
+        <pre class="prettyprint" data-lang="java">
+//枚举类型
+public enum Color{
+    Red,
+    White,
+    Blue
+}
+        </pre>
+    </article>
+  </slide>
+
+      <slide>
+    <hgroup>
+      <h2>可变参数列表与静态导入<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+//可变参数列表
+public void write(String... args){
+    for(String arg:args){
+        System.out.println(arg);
+    }
+}
+        </pre>
+        <pre class="prettyprint" data-lang="java">
+//静态导入
+import static java.lang.System.*;
+
+public void print(String arg){
+    out.println(arg);
+}
+        </pre>
+    </article>
+  </slide>
+      <slide>
+    <hgroup>
+      <h2>Switch支持字符串<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+public static void testSwitch(){  
+    String type="apple";  
+    switch(type){  
+        case "apple":  
+            System.out.println("dear");  
+            break;  
+        case "amd":  
+            System.out.println("amd");  
+            break;  
+        case "lenovo":  
+            System.out.println("le");  
+            break;  
+    }  
+}
+        </pre>
+    </article>
+  </slide>
+
+      <slide>
+    <hgroup>
+      <h2>范型推导与多异常捕获<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+//范型推导
+List&lt;String&gt; nameList = new ArrayList&lt;&gt;(16);  
+nameList.add("Terry");
+        </pre>
+        <pre class="prettyprint" data-lang="java">
+//多异常捕获 
+try { 
+    testException("first"); 
+} catch (FirstException | SecondException e) { 
+    System.out.println(e.getMessage()); 
+}
+        </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>try-with-resources<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+//try-with-resources能够确保需要关闭的资源在声明结束后被关闭 
+//但是需要被关闭的资源必须实现AutoCloseable接口  
+private static void customBufferStreamCopy(File source, File target) {
+    try (InputStream fis = new FileInputStream(source);
+        OutputStream fos = new FileOutputStream(target)){
+        byte[] buf = new byte[8192];
+        int i;
+        while ((i = fis.read(buf)) != -1) {
+            fos.write(buf, 0, i);
+        }
+    }
+    catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+        </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>lambda表达式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+//闭包（匿名内部类）
+button.addActionListener(new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+        ui.dazzle(e.getModifiers());
+    }
+});
+//lambda表达式
+button.addActionListener(e -> { ui.dazzle(e.getModifiers()); });
+
+//lambda表达式
+List<String> names = Arrays.asList("Alice", "Bob", "Charlie", "Dave");
+names.filter(e -> e.length() >= 4).forEach(e -> { System.out.println(e); });
+        </pre>
+        <pre  class="prettyprint" data-lang="python">
+names = ["Alice", "Bob", "Charlie", "Dave"]
+print(filter(lambda name:len(name) >= 4,names))
+        </pre>
+    </article>
+  </slide>
+
+ <slide>
+    <hgroup>
+      <h2>站在巨人肩上提升应用质量</h2>
+    </hgroup>
+    <article class="smaller">
+        <ul>
+            <li>Java常用的设计模式与简单用法</li>
+            <li>Java反模式与若干条程序设计军规</li>
+        </ul>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>单例设计模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+public class EagerSingleton 
+{ 
+	private static final EagerSingleton m_instance = new EagerSingleton(); 
+	/** 
+	* 私有的默认构造子 
+	*/ 
+	private EagerSingleton() { } 
+	/** 
+	* 静态工厂方法 
+	*/ 
+	public static EagerSingleton getInstance() {
+		return m_instance; 
+	}
+} 
+        </pre>
+        <p>实例化代价很高或者全局共享一个实例时使用，应注意多线程！</p>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>适配器设计模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+//我们需要接口
+interface Target { 
+    void Request(); 
+} 
+//已有实现
+class Adaptee {
+    void SpecificRequst() { 
+        System.out.println("Adaptee's SpecificRequst"); 
+    } 
+}
+//适配后的类
+class Adapter extends Adaptee implements Target  { 
+    @Override 
+    public void Request() { 
+         System.out.println("Adapter's Request"); 
+         super.SpecificRequst(); 
+    } 
+}
+        </pre>
+        <p>现有的实现能够满足我们的需要，但是接口不一致时使用</p>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>代理设计模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+public interface Subject {  
+    public void doSomething();  
+}
+public class RealSubject implements Subject {  
+    @Override  
+    public void doSomething() {  
+        System.out.println("RealSubject.doSomething");  
+    }  
+}
+import java.lang.reflect.InvocationHandler;  
+import java.lang.reflect.Method; 
+public class DynamicProxy implements InvocationHandler {  
+    private Object object;  
+    public DynamicProxy(Object object) {  
+        this.object = object;  
+    }     
+    @Override  
+    public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {  
+        Object result = method.invoke(object, args);
+        return result;  
+    }  
+}
+        </pre>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>代理设计模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+import java.lang.reflect.InvocationHandler;  
+import java.lang.reflect.Proxy;  
+public class Client {  
+    public static void main(String[] args) throws Exception {  
+        RealSubject realSubject = new RealSubject();             
+        InvocationHandler handler = new DynamicProxy(realSubject);  
+        Subject subject = (Subject) Proxy.newProxyInstance(handler.getClass().getClassLoader(),  
+                    Subject.class,handler);  
+        subject.doSomething();  
+    }  
+}  
+        </pre>
+        <p>为其他对象提供一种代理以控制对这个对象的访问。</p>
+    </article>
+  </slide>
+
+    <slide>
+    <hgroup>
+      <h2>观察者设计模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+public interface RandomNumberListener {//接口
+	public void numberChanged(double d);
+}
+public class Consol implements RandomNumberListener{
+	@Override
+	public void numberChanged(double d) {
+		System.out.println(d);
+	}
+}
+public class SwingWindow extends JFrame implements RandomNumberListener{//观察者
+	private JLabel label = new JLabel();
+	public SwingWindow(){
+	    this.getContentPane().add( label);
+	    this.setSize(300,200);
+	    this.setVisible(true);
+	}
+	@Override
+	public void numberChanged(double d) {
+		label.setText(String.valueOf(d));
+	}
+}
+        </pre>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>观察者设计模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+public class RandomNumber {//业务
+    private double r;
+    private List&lt;RandomNumberListener&gt;  listeners = new ArrayList&lt;RandomNumberListener&gt;();
+    public void addRandomNumberListener(RandomNumberListener lis){
+	listeners.add(lis);
+    }
+    public void random()(){
+	r = Math.random()();
+	for (RandomNumberListener lis : listeners) {
+	    lis.numberChanged(r);
+	}
+    }
+}
+        </pre>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>观察者设计模式<h2>
+    </hgroup>
+    <article class="smaller">
+        <pre class="prettyprint" data-lang="java">
+public class Test {
+    public static void main(String[] args) throws InterruptedException{
+	RandomNumber rn = new RandomNumber();
+	SwingWindow sw = new SwingWindow();
+	Consol c = new Consol();
+	rn.addRandomNumberListener(sw);
+	rn.addRandomNumberListener(c);
+	while(true){
+	    rn.random();
+	    Thread.sleep(new Random().nextInt(3000)+1000L);
+	}
+    }
+}
+        </pre>
+        <p>常用于监听对象内部的状态变化</p>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>以上抛砖引玉，仅仅是一个开始<h2>
+    </hgroup>
+    <article class="smaller">
+        <img src="images/thinking.png" class="reflect" alt="Description" title="Description">
+        <footer class="source">路漫漫其修远兮 吾将上下而求索</footer>
+    </article>
+  </slide>
+  <slide>
+    <hgroup>
+      <h2>Java的若干条军规<h2>
+    </hgroup>
+    <article class="smaller">
+        <img src="images/jungui.jpg" class="reflect" alt="Description" title="Description">
+        <footer class="source">离娄之明,公输子之巧,不以规矩,不成方圆</footer>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>JVM上的其他语言<h2>
+    </hgroup>
+    <article class="smaller">
+        <span>Java虚拟机已经不再是仅仅局限在 Java 了，很多语言提供了脚本转换，可以让其他的程序在java虚拟机上运行，这样能够让更多的开发者能够依靠JVM在Java平台上大有作为。而且虚拟机以及 对应的字节码都是开源的，所以你也能很容易地生成对应字节码来做一款属于你自己的编程语言。</span>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>Groovy<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>Groovy是一种基于JVM（Java虚拟机）的敏捷开发语言，它结合了Python、Ruby和Smalltalk的许多强大的特性，Groovy 代码能够与 Java 代码很好地结合，也能用于扩展现有代码。由于其运行在 JVM 上的特性，Groovy 可以使用其他 Java 语言编写的库。</p>
+        <pre class="prettyprint" data-lang="groovy">
+class Greet {
+  def name
+  Greet(who) { name = who[0].toUpperCase() +
+                      who[1..-1] }
+  def salute() { println "Hello $name!" }
+}
+g = new Greet('world')  // create object
+g.salute()               // output "Hello World!"
+        </pre>
+    </article>
+  </slide>
+    <slide>
+    <hgroup>
+      <h2>Scala<h2>
+    </hgroup>
+    <article class="smaller">
+        <p>Scala是一种多范式的编程语言，设计初衷是要集成面向对象编程和函数式编程的各种特性。</p>
+        <pre class="prettyprint" data-lang="scala">
+object  HelloWorld {
+   def main(args: Array[String]) {
+       println("Hello，Scala的HelloWorld程序！")
+   }
+}
+        </pre>
+    </article>
+  </slide>
+  <slide>
+    <hgroup>
+      <h2>JVM未来走向平台化<h2>
+      <h3>长远来看Java平台比Java语言有更重要</h3>
+    </hgroup>
+    <article>
+        <img src="images/ma.jpg" class="reflect" alt="Description" title="Description">
+        <footer class="source"> 老骥伏枥,志在千里; 烈士暮年,壮心不已。</footer>
+    </article>
+  </slide>
+
+
+  <slide class="thank-you-slide segue nobackground">
+    <aside class="gdbar right"><img src="images/developers_icon_128.png"></aside>
+    <article class="flexbox vleft auto-fadein">
+      <h2>&lt;Thank You!&gt;</h2>
+      <p>Important contact information goes here.</p>
+    </article>
+    <p class="auto-fadein" data-config-contact>
+      <!-- populated from slide_config.json -->
+    </p>
+  </slide>
+
+  <slide class="logoslide dark nobackground">
+    <article class="flexbox vcenter">
+      <span>Q&A</span>
+    </article>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<script>
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-XXXXXXXX-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>
