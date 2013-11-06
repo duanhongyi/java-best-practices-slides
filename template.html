@@ -669,7 +669,7 @@ public static final String[] PRIVATE_VALUES = {"a","c"};
         <p>设计良好的模块会隐藏所有的实现细节，把他的API和他的实现清晰的分割开来。然后，模块之间通过他们之间的API进行通信，一个模块不需要知道其他模块的内部情况，这样才能最大程度的解耦合。</p>
 			<pre class="prettyprint" data-lang="java">
 private static final String[] PRIVATE_VALUES = {"a","c"};  
-public static final Thing[] values() {  
+public static final String[] values() {  
     return PRIVATE_VALUES.clone();  
 }
         </pre>
